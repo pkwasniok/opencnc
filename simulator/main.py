@@ -86,31 +86,41 @@ def move_linear(x0, y0, x1, y1):
     return buffer
 
 
-def move_arc(x1, y1, r):
+def move_arc(x, y, i, j):
     buffer = []
 
-    x = 0
-    y = r
-    while x != y:
-        if (x+1)**2 + (y + 0.5)**2 - r**2 > 0:
-            y -= 1
+    # Calculate circle radius
+    r = math.sqrt((x ** 2) + (y ** 2) - ((i) ** 2) - ((j) ** 2))
+    print(r)
+
+    # Solve Bresenham's algorithm for first octant
+    a = 0
+    b = int(r)
+    while a != b:
+        if (a+1)**2 + (b+0.5)**2 - r**2 > 0:
+            b -= 1
             buffer.append([1, 1, 0])
         else:
             buffer.append([1, 0, 0])
-        x += 1
+        a += 1
 
+    # Copy and rotate first octant eight times to build full circle
     temp_buffer = []
     temp_buffer += buffer
     temp_buffer += list(map(lambda x: [x[1], x[0], x[2]], reversed(buffer)))
     temp_buffer += list(map(lambda x: [-x[1], x[0], x[2]], buffer))
     temp_buffer += list(map(lambda x: [-x[0], x[1], x[2]], reversed(buffer)))
-
     temp_buffer += list(map(lambda x: [-x[0], -x[1], x[2]], buffer))
     temp_buffer += list(map(lambda x: [-x[1], -x[0], x[2]], reversed(buffer)))
     temp_buffer += list(map(lambda x: [x[1], -x[0], x[2]], buffer))
     temp_buffer += list(map(lambda x: [x[0], -x[1], x[2]], reversed(buffer)))
+    buffer = temp_buffer
 
-    return temp_buffer
+    start_angle = math.degrees(math.atan(-j/-i))
+    end_angle = math.degrees(math.atan(y/x))
+    print(start_angle, end_angle)
+
+    return buffer
 
 
 def command_parser(line):
@@ -173,7 +183,8 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 buffer = []
-                buffer += move_arc(100, 51, 100)
+                buffer += move_arc(-70, 10, -40, -30)
+                # buffer += move_arc(100, 100, 200, 0)
 
             elif event.key == pygame.K_SLASH:
                 command_line = True

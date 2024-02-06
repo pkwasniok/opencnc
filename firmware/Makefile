@@ -1,4 +1,4 @@
-CFLAGS ?= -mcpu=cortex-m4 -mthumb
+CFLAGS ?= -mcpu=cortex-m4 -mthumb -W -Wall
 LDFLAGS ?= -T link.ld -nostdlib
 
 firmware.bin: firmware.elf

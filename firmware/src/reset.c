@@ -1,6 +1,6 @@
 // extern declarations
-extern void main(void);
 extern void __stack_pointer__(void);
+extern int main(void);
 
 // reset handler
 __attribute__((naked, noreturn)) void __reset(void) {
@@ -21,6 +21,8 @@ __attribute__((naked, noreturn)) void __reset(void) {
     }
 
     main();
+
+    while (1);
 }
 
 // vectors table (refer to Cortex-M and STM32 docs)

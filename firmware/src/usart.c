@@ -14,7 +14,3 @@ struct usart {
 #define USART2 ((struct usart *) 0x40004400)
 #define USART6 ((struct usart *) 0x40011400)
 
-void usart_init(struct usart *usart, int baud_rate) {
-    
-}
-
