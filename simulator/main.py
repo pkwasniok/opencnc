@@ -86,39 +86,52 @@ def move_linear(x0, y0, x1, y1):
     return buffer
 
 
-def move_arc(x, y, i, j):
-    buffer = []
-
+def move_arc(x, y, i, j, ccw=False):
     # Calculate circle radius
     r = math.sqrt((x ** 2) + (y ** 2) - ((i) ** 2) - ((j) ** 2))
-    print(r)
 
-    # Solve Bresenham's algorithm for first octant
-    a = 0
-    b = int(r)
-    while a != b:
-        if (a+1)**2 + (b+0.5)**2 - r**2 > 0:
-            b -= 1
-            buffer.append([1, 1, 0])
-        else:
-            buffer.append([1, 0, 0])
-        a += 1
+    # Calculate arc start angle
+    x0, y0 = -i, -j
+    arc_angle_start = (math.atan2(x0, y0) + math.tau) % math.tau
 
-    # Copy and rotate first octant eight times to build full circle
-    temp_buffer = []
-    temp_buffer += buffer
-    temp_buffer += list(map(lambda x: [x[1], x[0], x[2]], reversed(buffer)))
-    temp_buffer += list(map(lambda x: [-x[1], x[0], x[2]], buffer))
-    temp_buffer += list(map(lambda x: [-x[0], x[1], x[2]], reversed(buffer)))
-    temp_buffer += list(map(lambda x: [-x[0], -x[1], x[2]], buffer))
-    temp_buffer += list(map(lambda x: [-x[1], -x[0], x[2]], reversed(buffer)))
-    temp_buffer += list(map(lambda x: [x[1], -x[0], x[2]], buffer))
-    temp_buffer += list(map(lambda x: [x[0], -x[1], x[2]], reversed(buffer)))
-    buffer = temp_buffer
+    # Calculate arc end angle
+    x1, y1 = x-i, y-j
+    arc_angle_end = (math.atan2(x1, y1) + math.tau) % math.tau
 
-    start_angle = math.degrees(math.atan(-j/-i))
-    end_angle = math.degrees(math.atan(y/x))
-    print(start_angle, end_angle)
+    print(f'({x0}, {y0}) -> ({x1}, {y1}), r = {r}')
+
+    # Make sure that start angle is smaller than end angle
+    if arc_angle_start > arc_angle_end:
+        arc_angle_start, arc_angle_end = arc_angle_end, arc_angle_start
+
+    # Calculate arc measure and length
+    arc_measure = arc_angle_end - arc_angle_start
+
+    # Calculate arc length
+    arc_length = (2 * math.pi * r) / math.tau * arc_measure
+
+    # Calculate segments number
+    arc_segment_length = 10
+    arc_segments_number = math.ceil(arc_length / arc_segment_length)
+
+    # Calculate segments coordinates
+    coordinates = []
+    for i in range(arc_segments_number+1):
+        dangle = (arc_measure / arc_segments_number)
+        current_angle = arc_angle_start + (dangle * i)
+
+        x = int(math.cos(current_angle) * r)
+        y = int(math.sin(current_angle) * r)
+
+        coordinates.append((x, y))
+
+    # Translate coordinates array to translation vectors array
+    buffer = []
+    for i in range(len(coordinates)-1):
+        dx = (coordinates[i+1][0] - coordinates[i][0])
+        dy = -(coordinates[i+1][1] - coordinates[i][1])
+        buffer.extend(move_linear(0, 0, dx, dy))
+    return buffer
 
     return buffer
 
@@ -183,8 +196,8 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 buffer = []
-                buffer += move_arc(-70, 10, -40, -30)
-                # buffer += move_arc(100, 100, 200, 0)
+                buffer += move_arc(100, 100, 100, 0, ccw=False)
+                buffer += move_arc(100, -100, 0, -100, ccw=False)
 
             elif event.key == pygame.K_SLASH:
                 command_line = True
