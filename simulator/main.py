@@ -242,9 +242,9 @@ while True:
         elif keys[pygame.K_RIGHT]:
             motor_x.step(False)
         if keys[pygame.K_UP]:
-            motor_y.step(True)
-        elif keys[pygame.K_DOWN]:
             motor_y.step(False)
+        elif keys[pygame.K_DOWN]:
+            motor_y.step(True)
         if keys[pygame.K_COMMA]:
             motor_z.step(True)
         elif keys[pygame.K_PERIOD]:

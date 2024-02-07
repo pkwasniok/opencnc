@@ -50,19 +50,17 @@ class XYPlotterElement():
                     (self.x+self.width-6, self.y+i*10+10),
                     1)
 
+        # Limits
         if x > self.width-10:
             x = self.width-10
-
-        if x < 0:
+        elif x < 0:
             x = 0
-
-        if y > self.height-10:
+        elif y > self.height-10:
             y = self.height-10
-
         if y < 0:
             y = 0
 
-        # Axes
+        # X Axis
         pygame.draw.line(
                 self.screen,
                 (200, 200, 200),
@@ -70,11 +68,12 @@ class XYPlotterElement():
                 (self.x+x+4, self.y+self.height-5),
                 2)
 
+        # Y Axis
         pygame.draw.line(
                 self.screen,
                 (200, 200, 200),
-                (self.x+4, self.y+y+4),
-                (self.x+self.width-5, self.y+y+4),
+                (self.x+4, self.y+self.height-y-4),
+                (self.x+self.width-5, self.y+self.height-y-4),
                 2)
 
 
