@@ -92,27 +92,25 @@ def move_arc(x, y, i, j, ccw=False):
 
     # Calculate arc start angle
     x0, y0 = -i, -j
-    arc_angle_start = (math.atan2(x0, y0) + math.tau) % math.tau
+    arc_angle_start = (math.atan2(y0, x0) + math.tau) % math.tau
 
     # Calculate arc end angle
     x1, y1 = x-i, y-j
-    arc_angle_end = (math.atan2(x1, y1) + math.tau) % math.tau
+    arc_angle_end = (math.atan2(y1, x1) + math.tau) % math.tau
 
-    print(f'({x0}, {y0}) -> ({x1}, {y1}), r = {r}')
-
-    # Make sure that start angle is smaller than end angle
-    if arc_angle_start > arc_angle_end:
-        arc_angle_start, arc_angle_end = arc_angle_end, arc_angle_start
-
-    # Calculate arc measure and length
+    # Calculate arc measure
     arc_measure = arc_angle_end - arc_angle_start
+    if arc_measure > 0 and ccw is False:
+        arc_measure = (math.tau - abs(arc_measure)) % math.tau * -1
+    elif arc_measure < 0 and ccw is True:
+        arc_measure = (math.tau - abs(arc_measure)) % math.tau
 
     # Calculate arc length
     arc_length = (2 * math.pi * r) / math.tau * arc_measure
 
     # Calculate segments number
     arc_segment_length = 10
-    arc_segments_number = math.ceil(arc_length / arc_segment_length)
+    arc_segments_number = math.ceil(abs(arc_length) / arc_segment_length)
 
     # Calculate segments coordinates
     coordinates = []
@@ -129,10 +127,8 @@ def move_arc(x, y, i, j, ccw=False):
     buffer = []
     for i in range(len(coordinates)-1):
         dx = (coordinates[i+1][0] - coordinates[i][0])
-        dy = -(coordinates[i+1][1] - coordinates[i][1])
+        dy = (coordinates[i+1][1] - coordinates[i][1])
         buffer.extend(move_linear(0, 0, dx, dy))
-    return buffer
-
     return buffer
 
 
@@ -148,7 +144,9 @@ def command_parser(line):
     elif segments[0] == "G1":
         return move_linear(0, 0, args["X"], args["Y"])
     elif segments[0] == "G2":
-        return move_arc(args["X"], args["Y"], args["R"])
+        return move_arc(args["X"], args["Y"], args["I"], args["J"], ccw=False)
+    elif segments[0] == "G3":
+        return move_arc(args["X"], args["Y"], args["I"], args["J"], ccw=True)
     else:
         return []
 
@@ -196,8 +194,14 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 buffer = []
-                buffer += move_arc(100, 100, 100, 0, ccw=False)
-                buffer += move_arc(100, -100, 0, -100, ccw=False)
+                buffer += move_linear(0, 0, 100, 0)
+                buffer += move_arc(100, 100, 0, 100, ccw=True)
+                buffer += move_linear(0, 0, 0, 100)
+                buffer += move_arc(-100, 100, -100, 0, ccw=True)
+                buffer += move_linear(0, 0, -100, 0)
+                buffer += move_arc(-100, -100, 0, -100, ccw=True)
+                buffer += move_linear(0, 0, 0, -100)
+                buffer += move_arc(100, -100, 100, 0, ccw=True)
 
             elif event.key == pygame.K_SLASH:
                 command_line = True
