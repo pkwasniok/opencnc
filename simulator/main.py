@@ -32,33 +32,40 @@ class Motor():
         self.position = position
 
 
-def move_rapid(x0, y0, x1, y1):
+def move_rapid(x, y):
+    # Rename parameters
+    x1, y1 = x, y
+
     buffer = []
-    while x0 != x1 or y0 != y1:
+    x, y = 0, 0
+    while x != x1 or y != y1:
         command = [0, 0, 0]
-        if x1 > x0:
+        if x1 > x:
             command[0] = 1
-        elif x1 < x0:
+        elif x1 < x:
             command[0] = -1
-        if y1 > y0:
+        if y1 > y:
             command[1] = 1
-        elif y1 < y0:
+        elif y1 < y:
             command[1] = -1
-        x0 += command[0]
-        y0 += command[1]
+        x += command[0]
+        y += command[1]
         buffer.append(command)
     return buffer
 
 
-def move_linear(x0, y0, x1, y1):
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
+def move_linear(x, y):
+    # Rename parameters
+    x1, y1 = x, y
+
+    dx = abs(x1)
+    dy = abs(y1)
 
     if dy > dx:
         dx, dy = dy, dx
 
     buffer = []
-    y = 0
+    x, y = 0, 0
     for x in range(dx):
         command = [0, 0, 0]
 
@@ -68,17 +75,17 @@ def move_linear(x0, y0, x1, y1):
         else:
             command = [1, 0, 0]
 
-        if abs(y1-y0) > abs(x1-x0):
+        if abs(y1) > abs(x1):
             command = [command[1], command[0], 0]
-            if x1 < x0:
+            if x1 < 0:
                 command[0] *= -1
-            if y1 < y0:
+            if y1 < 0:
                 command[1] *= -1
         else:
             command = command
-            if x1 < x0:
+            if x1 < 0:
                 command[0] *= -1
-            if y1 < y0:
+            if y1 < 0:
                 command[1] *= -1
 
         buffer.append(command)
@@ -128,7 +135,7 @@ def move_arc(x, y, i, j, ccw=False):
     for i in range(len(coordinates)-1):
         dx = (coordinates[i+1][0] - coordinates[i][0])
         dy = (coordinates[i+1][1] - coordinates[i][1])
-        buffer.extend(move_linear(0, 0, dx, dy))
+        buffer.extend(move_linear(dx, dy))
     return buffer
 
 
@@ -140,9 +147,9 @@ def command_parser(line):
         args[segment[0]] = int(segment[1:])
 
     if segments[0] == "G0":
-        return move_rapid(0, 0, args["X"], args["Y"])
+        return move_rapid(args["X"], args["Y"])
     elif segments[0] == "G1":
-        return move_linear(0, 0, args["X"], args["Y"])
+        return move_linear(args["X"], args["Y"])
     elif segments[0] == "G2":
         return move_arc(args["X"], args["Y"], args["I"], args["J"], ccw=False)
     elif segments[0] == "G3":
@@ -194,13 +201,13 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 buffer = []
-                buffer += move_linear(0, 0, 100, 0)
+                buffer += move_linear(100, 0)
                 buffer += move_arc(100, 100, 0, 100, ccw=True)
-                buffer += move_linear(0, 0, 0, 100)
+                buffer += move_linear(0, 100)
                 buffer += move_arc(-100, 100, -100, 0, ccw=True)
-                buffer += move_linear(0, 0, -100, 0)
+                buffer += move_linear(-100, 0)
                 buffer += move_arc(-100, -100, 0, -100, ccw=True)
-                buffer += move_linear(0, 0, 0, -100)
+                buffer += move_linear(0, -100)
                 buffer += move_arc(100, -100, 100, 0, ccw=True)
 
             elif event.key == pygame.K_SLASH:
