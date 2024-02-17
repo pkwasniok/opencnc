@@ -14,8 +14,8 @@ clean:
 firmware.bin: firmware.elf
 	arm-none-eabi-objcopy -O binary build/firmware.elf build/firmware.bin
 
-firmware.elf: main.o reset.o rcc.o gpio.o usart.o
-	arm-none-eabi-gcc $(LDFLAGS) $(CFLAGS) build/reset.o build/main.o build/rcc.o build/gpio.o build/usart.o -o build/firmware.elf
+firmware.elf: main.o reset.o rcc.o gpio.o usart.o print.o
+	arm-none-eabi-gcc $(LDFLAGS) $(CFLAGS) build/reset.o build/main.o build/rcc.o build/gpio.o build/usart.o build/print.o -o build/firmware.elf
 
 main.o:
 	arm-none-eabi-gcc $(CFLAGS) -c src/main.c -o build/main.o
@@ -31,4 +31,7 @@ gpio.o:
 
 usart.o:
 	arm-none-eabi-gcc $(CFLAGS) -c src/peripherals/usart.c -o build/usart.o
+
+print.o:
+	arm-none-eabi-gcc $(CFLAGS) -c src/misc/print.c -o build/print.o
 

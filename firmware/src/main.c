@@ -1,10 +1,10 @@
 #include "peripherals/gpio.h"
-#include "peripherals/usart.h"
+#include "misc/print.h"
 
 int main(void) {
     // Initialize peripherals
     gpio_init(GPIOA);
-    usart_init(USART2);
+    print_init(USART2);
 
     // Configure GPIOA2 and GPIOA3 to AF07 (USART2 Rx/Tx)
     gpio_pin_init_alternate_function(GPIOA, 2, GPIO_ALTERNATE_FUNCTION_07);
@@ -12,10 +12,8 @@ int main(void) {
 
     // Echo USART2 data
     while (1) {
-        while (usart_rx_is_buffer_not_empty(USART2)) {
-            char data = usart_read(USART2);
-            usart_write(USART2, data);
-        }
+        println("Hello, world!");
+        for (int i=0; i<800000; i++);
     }
 
     return 0;
