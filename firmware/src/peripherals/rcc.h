@@ -1,7 +1,7 @@
 #ifndef RCC_H_
 #define RCC_H_
 
-// Refer to STM32F411CE Reference manual, page XX
+// Refer to STM32F411CE Reference manual, page 136
 struct rcc {
     volatile long CR;
     volatile long PLLCFGR;
@@ -41,10 +41,10 @@ struct rcc {
     volatile long DCKCFGR;
 };
 
-// Refer to STM32F411CE Reference manual, page XX
+// Refer to STM32F411CE Reference manual, page 38
 #define RCC ((struct rcc *) 0x40023800)
 
-// Refer to STM32F411CE Reference manual, page XX
+// Refer to STM32F411CE Reference manual, page 113-122
 #define RCC_CLOCK_DMA2 1
 #define RCC_CLOCK_DMA1 2
 #define RCC_CLOCK_CRC 3
@@ -88,3 +88,4 @@ void rcc_clock_enable(struct rcc *rcc, int clock);
 void rcc_clock_disable(struct rcc *rcc, int clock);
 
 #endif // RCC_H_
+

@@ -101,17 +101,17 @@ void gpio_pin_config_output_speed(struct gpio *gpio, int pin, int speed) {
 
 
 // Utility
-void gpio_pin_output_set_low(struct gpio *gpio, int pin) {
+inline void gpio_pin_output_set_low(struct gpio *gpio, int pin) {
     // Set pin state to low
     gpio->BSRR |= (0b1<<(pin+16));
 }
 
-void gpio_pin_output_set_high(struct gpio *gpio, int pin) {
+inline void gpio_pin_output_set_high(struct gpio *gpio, int pin) {
     // Set pin state to high
     gpio->BSRR |= (0b1<<pin);
 }
 
-void gpio_pin_output_toggle(struct gpio *gpio, int pin) {
+inline void gpio_pin_output_toggle(struct gpio *gpio, int pin) {
     // Toggle pin state
     gpio->ODR ^= (0b1<<pin);
 }
