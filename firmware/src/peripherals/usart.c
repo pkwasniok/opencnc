@@ -3,14 +3,14 @@
 
 
 // Initialization
-void usart_init(struct usart *usart, int baud_rate) {
-    // Enable clock
+void usart_init(struct usart *usart) {
+    // Enable peripheral clock
     if (usart == USART1) {
-        RCC->APB1ENR |= (1<<4);
+        rcc_clock_enable(RCC, RCC_CLOCK_USART1);
     } else if (usart == USART2) {
-        RCC->APB1ENR |= (1<<17);
+        rcc_clock_enable(RCC, RCC_CLOCK_USART2);
     } else if (usart == USART6) {
-        RCC->APB1ENR |= (1<<5);
+        rcc_clock_enable(RCC, RCC_CLOCK_USART6);
     }
 
     // Enable usart
@@ -63,3 +63,4 @@ int usart_tx_is_empty(struct usart *usart) {
 int usart_rx_is_empty(struct usart *usart) {
     return !(usart->SR & (1<<5));
 }
+

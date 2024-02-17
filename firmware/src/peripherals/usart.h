@@ -18,7 +18,7 @@ struct usart {
 #define USART6 ((struct usart *) 0x40011400)
 
 // Initialization
-void usart_init(struct usart *usart, int baud_rate);
+void usart_init(struct usart *usart);
 
 // Utility
 void usart_write(struct usart *usart, char byte);
