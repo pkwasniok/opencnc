@@ -1,5 +1,7 @@
-#pragma once
+#ifndef RCC_H_
+#define RCC_H_
 
+// Refer to STM32F411CE Reference manual, page XX
 struct rcc {
     volatile long CR;
     volatile long PLLCFGR;
@@ -39,5 +41,7 @@ struct rcc {
     volatile long DCKCFGR;
 };
 
+// Refer to STM32F411CE Reference manual, page XX
 #define RCC ((struct rcc *) 0x40023800)
 
+#endif // RCC_H_
